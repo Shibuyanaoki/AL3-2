@@ -14,6 +14,8 @@
 /// </summary>
 class GameScene {
 
+	sprite* sprite
+
 public: // メンバ関数
 	/// <summary>
 	/// コンストクラタ
