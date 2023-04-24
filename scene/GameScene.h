@@ -8,14 +8,12 @@
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+#include "Player.h"
 
 /// <summary>
 /// ゲームシーン
 /// </summary>
 class GameScene {
-
-	sprite* sprite
-
 public: // メンバ関数
 	/// <summary>
 	/// コンストクラタ
@@ -46,6 +44,14 @@ private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
 	Audio* audio_ = nullptr;
+	uint32_t textureHandle_ = 0;
+	uint32_t textureHandleModel_ = 0;
+
+	
+	//Sprite* sprite_ = nullptr;
+	Model* model_ = nullptr;
+	Player* player_ = nullptr;
+	ViewProjection viewProjection_;
 
 	/// <summary>
 	/// ゲームシーン用
