@@ -1,5 +1,7 @@
 ﻿#include "Model.h"
 #include "WorldTransform.h"
+#include"Input.h"
+
 
 class Player {
 
@@ -14,4 +16,6 @@ private:
 	WorldTransform worldTransform_;
 	Model* model_ = nullptr;
 	uint32_t texturehandle_ = 0u;
+	Input* input_ = nullptr;
+	float inputFloat3[3] = {0, 0, 0};
 };
