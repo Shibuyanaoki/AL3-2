@@ -1,8 +1,8 @@
 ﻿#include "Player.h"
+#include "ImGuiManager.h"
+#include "MT.h"
 #include "iostream"
 #include <cassert>
-#include "MT.h"
-#include "ImGuiManager.h"
 
 using namespace std;
 
@@ -27,9 +27,6 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 
 	// ワールドトランスフォームの初期化
 	worldTransform_.Initialize();
-
-	
-
 }
 
 void Player::Update() {
@@ -56,57 +53,78 @@ void Player::Update() {
 		move.y -= kCharacterSpeed;
 	}
 
-	//移動限界座標
+	// 移動限界座標
 	const float kMoveLimitX = 31;
 	const float kMoveLimitY = 19;
-	
-	//範囲を超えない処理
+
+	// 範囲を超えない処理
 	worldTransform_.translation_.x = max(worldTransform_.translation_.x, -kMoveLimitX);
 	worldTransform_.translation_.x = min(worldTransform_.translation_.x, +kMoveLimitX);
 	worldTransform_.translation_.y = max(worldTransform_.translation_.y, -kMoveLimitY);
 	worldTransform_.translation_.y = min(worldTransform_.translation_.y, +kMoveLimitY);
-
 
 	// 座標飯銅(ベクトルの加算)
 	worldTransform_.translation_.x += move.x;
 	worldTransform_.translation_.y += move.y;
 	worldTransform_.translation_.z += move.z;
 
-	// スケーリング行列を宣言
-	Matrix4x4 matScale; // 4行4列
-	matScale.m[0][0] = worldTransform_.scale_.x;
-	matScale.m[1][1] = worldTransform_.scale_.y;
-	matScale.m[2][2] = worldTransform_.scale_.z;
-	matScale.m[0][0] = 1;
+	worldTransform_.matWorld_ = MakeAffineMatrix(
+	    worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
 
-	// 行列の転送　行列の計算後に」行う
+	// 行列の転送　行列の計算後に行う
 	worldTransform_.TransferMatrix();
 
-	
-
-	worldTransform_.matWorld_ = MakeAffineMatrix(
-	    worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_); 
-
-	//キャラクターの座標を画面表示する処理
+	// キャラクターの座標を画面表示する処理
 	ImGui::Begin("Debug1");
-	float playerPos[] = {worldTransform_.translation_.x, worldTransform_.translation_.y, worldTransform_.translation_.z};
+	float playerPos[] = {
+	    worldTransform_.translation_.x, worldTransform_.translation_.y,
+	    worldTransform_.translation_.z};
 	ImGui::SliderFloat3("PlayerPos", playerPos, 0, 1280);
 
-	//処理のままだとSilderFloat3でplayerPosの値を変えているので実際の座標(translation)が
-	//変わっていないのでここで変更する
+	// 処理のままだとSilderFloat3でplayerPosの値を変えているので実際の座標(translation)が
+	// 変わっていないのでここで変更する
 	worldTransform_.translation_.x = playerPos[0];
 	worldTransform_.translation_.y = playerPos[1];
 	worldTransform_.translation_.z = playerPos[2];
 
 	ImGui::End();
 
-	// 行列を定数バッファに転送
-	worldTransform_.TransferMatrix();
+	Rotate();
 
+	Attack();
 
-
+	if (bullet_) {
+		bullet_->Update();
+	}
 }
 
 void Player::Draw(ViewProjection& viewProjection) {
 	model_->Draw(worldTransform_, viewProjection, texturehandle_);
+	if (bullet_) {
+		bullet_->Draw(viewProjection);
+	}
+}
+
+void Player::Rotate() {
+	// 回転速さ[ラジアン/frame]
+	const float kRotSpeed = 0.02f;
+
+	// 押した方向で移動ベクトルを変更
+	if (input_->PushKey(DIK_A)) {
+		worldTransform_.rotation_.y -= kRotSpeed;
+	} else if (input_->PushKey(DIK_D)) {
+		worldTransform_.rotation_.y += kRotSpeed;
+	}
+}
+
+void Player::Attack() {
+
+	if (input_->PushKey(DIK_SPACE)) {
+		// 弾を生成し、初期化
+		PlayerBullet* newBullet = new PlayerBullet();
+		newBullet->Initialize(model_, worldTransform_.translation_);
+
+		// 弾を登録する
+		bullet_ = newBullet;
+	}
 }
