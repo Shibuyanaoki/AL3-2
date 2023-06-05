@@ -93,16 +93,37 @@ void Player::Update() {
 
 	Attack();
 
-	if (bullet_) {
+	//弾の更新
+	/*if (bullet_) {
 		bullet_->Update();
+	}*/
+
+	for (PlayerBullet* bullet : bullets_) {
+		bullet->Update();	
+	}
+
+}
+
+// bullet_の解放
+
+Player::~Player() {
+	for (PlayerBullet* bullet : bullets_) {
+		delete bullet;
 	}
 }
 
 void Player::Draw(ViewProjection& viewProjection) {
 	model_->Draw(worldTransform_, viewProjection, texturehandle_);
-	if (bullet_) {
+	
+	//弾の描画
+	/*if (bullet_) {
 		bullet_->Draw(viewProjection);
+	}*/
+
+	for (PlayerBullet* bullet : bullets_) {
+		bullet->Draw(viewProjection);
 	}
+
 }
 
 void Player::Rotate() {
@@ -119,12 +140,21 @@ void Player::Rotate() {
 
 void Player::Attack() {
 
-	if (input_->PushKey(DIK_SPACE)) {
+	if (input_->TriggerKey(DIK_SPACE)) {
+
+		// 弾があれば解放する
+		/*if (bullet_) {
+		     delete bullet_;
+		    bullet_ = nullptr;
+		}*/
+
+		// 自キャラの座標をコピー
+
 		// 弾を生成し、初期化
 		PlayerBullet* newBullet = new PlayerBullet();
 		newBullet->Initialize(model_, worldTransform_.translation_);
 
 		// 弾を登録する
-		bullet_ = newBullet;
+		bullets_.push_back(newBullet);
 	}
 }
