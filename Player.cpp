@@ -32,6 +32,16 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 void Player::Update() {
 	worldTransform_.TransferMatrix();
 
+	// デスフラグの立った弾を削除
+	bullets_.remove_if([](PlayerBullet* bullet) {
+		if (bullet->IsDead()) {
+			delete bullet;
+			return true;
+		}
+		return false;
+	});
+
+
 	// キャラクターの移動ベクトル
 	Vector3 move = {0, 0, 0};
 
@@ -93,15 +103,16 @@ void Player::Update() {
 
 	Attack();
 
-	//弾の更新
+	// 弾の更新
 	/*if (bullet_) {
-		bullet_->Update();
+	    bullet_->Update();
 	}*/
 
 	for (PlayerBullet* bullet : bullets_) {
-		bullet->Update();	
+		bullet->Update();
 	}
 
+	
 }
 
 // bullet_の解放
@@ -114,16 +125,15 @@ Player::~Player() {
 
 void Player::Draw(ViewProjection& viewProjection) {
 	model_->Draw(worldTransform_, viewProjection, texturehandle_);
-	
-	//弾の描画
+
+	// 弾の描画
 	/*if (bullet_) {
-		bullet_->Draw(viewProjection);
+	    bullet_->Draw(viewProjection);
 	}*/
 
 	for (PlayerBullet* bullet : bullets_) {
 		bullet->Draw(viewProjection);
 	}
-
 }
 
 void Player::Rotate() {
@@ -142,17 +152,16 @@ void Player::Attack() {
 
 	if (input_->TriggerKey(DIK_SPACE)) {
 
-		// 弾があれば解放する
-		/*if (bullet_) {
-		     delete bullet_;
-		    bullet_ = nullptr;
-		}*/
+		// 弾の速度
+		const float kBulletSpeed = 1.0f;
+		Vector3 velocity(0, 0, kBulletSpeed);
 
-		// 自キャラの座標をコピー
+		// 速度ベクトルを時機向きに合わせて回転させる
+		velocity = TransformNormal(velocity, worldTransform_.matWorld_);
 
 		// 弾を生成し、初期化
 		PlayerBullet* newBullet = new PlayerBullet();
-		newBullet->Initialize(model_, worldTransform_.translation_);
+		newBullet->Initialize(model_, worldTransform_.translation_, velocity);
 
 		// 弾を登録する
 		bullets_.push_back(newBullet);

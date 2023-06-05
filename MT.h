@@ -11,7 +11,6 @@
 /// <returns></returns>
 Matrix4x4 MakeRotateXmatrix(float radian);
 
-
 /// <summary>
 /// Y軸回転行列
 /// </summary>
@@ -41,7 +40,7 @@ Matrix4x4 MakeTranslateMatrix(Vector3 translate);
 Matrix4x4 MakeScaleMatrix(const Vector3& scale);
 
 /// <summary>
-/// 
+///
 /// </summary>
 /// <param name="m1"></param>
 /// <param name="m2"></param>
@@ -56,4 +55,15 @@ Matrix4x4 Multiply(const Matrix4x4& m1, const Matrix4x4& m2);
 /// <param name="translate"></param>
 /// <returns></returns>
 Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rot, const Vector3& translate);
+
+/// <summary>
+/// ベクトル変換
+/// </summary>
+/// <param name="v"></param>
+/// <param name="m"></param>
+/// <returns></returns>
+Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m);
+
+
+
 
