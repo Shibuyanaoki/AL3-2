@@ -36,9 +36,6 @@ void PlayerBullet::Update() {
 		isDead_ = true;	
 	}
 	
-	
-	
-
 }
 
 void PlayerBullet::Draw(const ViewProjection& viewProjection) {

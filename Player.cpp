@@ -112,7 +112,6 @@ void Player::Update() {
 		bullet->Update();
 	}
 
-	
 }
 
 // bullet_の解放
