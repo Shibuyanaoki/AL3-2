@@ -28,9 +28,9 @@ void GameScene::Initialize() {
 	//敵の速度
 	const float kEnemySpeed = 0.5f;
 	//敵の移動
-	Vector3 velocity(0, 0, kEnemySpeed);
-
-	Vector3 EnemyPosition = {5.0f, 9.0f, 40.0f};
+	Vector3 velocity(kEnemySpeed, kEnemySpeed, -kEnemySpeed);
+	//敵のポジション
+	Vector3 EnemyPosition = {0.0f, 1.0f, 40.0f};
 
 	// 自キャラの生成
 	player_ = new Player();

@@ -35,6 +35,8 @@ void PlayerBullet::Update() {
 	if (--deathTimer_ <= 0) {
 		isDead_ = true;	
 	}
+
+
 	
 }
 

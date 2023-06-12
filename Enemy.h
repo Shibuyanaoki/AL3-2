@@ -5,6 +5,7 @@
 #include "PlayerBullet.h"
 #include <list>
 
+
 /// <summary>
 /// 敵
 /// </summary>
@@ -17,11 +18,23 @@ public:
 
 	void Draw(ViewProjection& viewProjection);
 
+	void Approach();
+
+	void Leave();
+
 private:
+	// 行動フェーズ
+	enum class Phase {
+		Approach, // 接近する
+		Leave,    // 離脱する
+	};
+
 	WorldTransform worldTransform_;
 	Model* model_ = nullptr;
 	uint32_t texturehandle_ = 0u;
 	// 速度
 	Vector3 velocity_;
+	//フェーズ
+	Phase phase_ = Phase::Approach;	
 
 };
