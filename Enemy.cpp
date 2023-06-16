@@ -1,5 +1,12 @@
 ﻿#include "Enemy.h"
 
+
+Enemy::~Enemy() {
+	for (EnemyBullet* bullet : enemyBullets_) {
+		delete bullet;
+	}
+}
+
 void Enemy::Initialize(Model* model, Vector3& position, const Vector3& velocity) {
 	assert(model);
 
@@ -12,9 +19,21 @@ void Enemy::Initialize(Model* model, Vector3& position, const Vector3& velocity)
 	worldTransform_.translation_ = position;
 	// 引数で受け取った速度をメンバ変数に代入
 	velocity_ = velocity;
+	Fire();
+
 }
 
 void Enemy::Update() {
+
+	// デスフラグの立った弾を削除
+	enemyBullets_.remove_if([](EnemyBullet* bullet) {
+		if (bullet->IsDead()) {
+			delete bullet;
+			return true;
+		}
+		return false;
+	});
+
 	worldTransform_.matWorld_ = MakeAffineMatrix(
 	    worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
 
@@ -24,20 +43,29 @@ void Enemy::Update() {
 	switch (phase_) {
 	case Phase::Approach:
 	default:
-		
+
 		Approach();
 
 		break;
 	case Phase::Leave:
-	
-	Leave();
+
+		Leave();
 
 		break;
 	}
+
+	for (EnemyBullet* bullet : enemyBullets_) {
+		bullet->Update();
+	}
+
 };
 
 void Enemy::Draw(ViewProjection& viewProjection) {
 	model_->Draw(worldTransform_, viewProjection, texturehandle_);
+
+	for (EnemyBullet* bullet : enemyBullets_) {
+		bullet->Draw(viewProjection);
+	}
 };
 
 void Enemy::Approach() {
@@ -45,9 +73,9 @@ void Enemy::Approach() {
 	worldTransform_.translation_.z += velocity_.z;
 
 	if (worldTransform_.translation_.z < 0.0f) {
+		
 		phase_ = Phase::Leave;
 	}
-
 }
 
 void Enemy::Leave() {
@@ -56,6 +84,21 @@ void Enemy::Leave() {
 	worldTransform_.translation_.x -= velocity_.x;
 	worldTransform_.translation_.y += velocity_.y;
 	worldTransform_.translation_.z += velocity_.z;
-
 }
 
+
+void Enemy::Fire() {
+	// 弾の速度
+	const float kBulletSpeed = 0.8f;
+	Vector3 velocity(0, 0, -kBulletSpeed);
+
+	// 速度ベクトルを時機向きに合わせて回転させる
+	velocity = TransformNormal(velocity, worldTransform_.matWorld_);
+
+	// 弾を生成し、初期化
+	EnemyBullet* newBullet = new EnemyBullet();
+	newBullet->Initialize(model_, worldTransform_.translation_, velocity);
+
+	// 弾を登録する
+	enemyBullets_.push_back(newBullet);
+} 

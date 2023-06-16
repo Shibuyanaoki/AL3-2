@@ -115,7 +115,6 @@ void Player::Update() {
 }
 
 // bullet_の解放
-
 Player::~Player() {
 	for (PlayerBullet* bullet : bullets_) {
 		delete bullet;
