@@ -26,7 +26,7 @@ void GameScene::Initialize() {
 	
 
 	//敵の速度
-	const float kEnemySpeed = 0.5f;
+	const float kEnemySpeed = 0.3f;
 	//敵の移動
 	Vector3 velocity(kEnemySpeed, kEnemySpeed, -kEnemySpeed);
 	//敵のポジション
@@ -43,6 +43,9 @@ void GameScene::Initialize() {
 
 	// デバックカメラの生成
 	debugCamera_ = new DebugCamera(1280, 720);
+
+	enemy_->SetPlayer(player_);
+
 }
 
 void GameScene::Update() {

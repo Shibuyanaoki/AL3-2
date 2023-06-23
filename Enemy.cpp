@@ -19,8 +19,8 @@ void Enemy::Initialize(Model* model, Vector3& position, const Vector3& velocity)
 	worldTransform_.translation_ = position;
 	// 引数で受け取った速度をメンバ変数に代入
 	velocity_ = velocity;
-	Fire();
-
+	//接近フェーズ初期化
+	
 }
 
 void Enemy::Update() {
@@ -53,6 +53,8 @@ void Enemy::Update() {
 
 		break;
 	}
+
+	ANIT();
 
 	for (EnemyBullet* bullet : enemyBullets_) {
 		bullet->Update();
@@ -102,3 +104,16 @@ void Enemy::Fire() {
 	// 弾を登録する
 	enemyBullets_.push_back(newBullet);
 } 
+
+void Enemy::ANIT() {
+	//発射タイマーカウントダウン
+	timer_--;
+	//指定時間に達した
+	if (timer_ <= 0) {
+		// 弾の発射
+		Fire();
+		//発射タイマーを初期化
+		timer_ = kFireInterval;
+
+	}
+}

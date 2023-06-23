@@ -5,6 +5,8 @@
 #include "WorldTransform.h"
 #include <list>
 
+class Player;
+
 /// <summary>
 /// 敵
 /// </summary>
@@ -17,6 +19,8 @@ public:
 	void Update();
 
 	void Draw(ViewProjection& viewProjection);
+
+	void SetPlayer(Player* player) { player_ = player; }
 
 private:
 	void Approach();
@@ -43,4 +47,13 @@ private:
 	// フェーズ
 	Phase phase_ = Phase::Approach;
 	EnemyBullet* enemyBullet_ = nullptr;
+	// 発射タイマー
+	int32_t timer_ = 0;
+	Player* player_ = nullptr;
+
+public:
+	// 発射間隔
+	static const int kFireInterval = 60;
+	//接近フェーズ初期化
+	void ANIT();
 };
