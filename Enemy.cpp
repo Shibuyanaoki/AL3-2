@@ -1,5 +1,5 @@
 ﻿#include "Enemy.h"
-
+#include "Player.h"
 
 Enemy::~Enemy() {
 	for (EnemyBullet* bullet : enemyBullets_) {
@@ -90,12 +90,30 @@ void Enemy::Leave() {
 
 
 void Enemy::Fire() {
+	assert(player_);
+
 	// 弾の速度
 	const float kBulletSpeed = 0.8f;
 	Vector3 velocity(0, 0, -kBulletSpeed);
 
+	//自キャラの座標取得
+	player_->GetWorldPosition();
+	//敵チャラの座標取得
+	GetWorldPosition();
+	//敵キャラ→自キャラの差分ベクトルを求める
+	DifferentialVector = {
+	    player_->GetWorldPosition().x -GetWorldPosition().x,
+	    player_->GetWorldPosition().y -GetWorldPosition().y,
+	    player_->GetWorldPosition().z -GetWorldPosition().z
+	};
+
+	velocity = Normalize(DifferentialVector);
+
+	//resultNomalize.z += velocity.z;
+
+
 	// 速度ベクトルを時機向きに合わせて回転させる
-	velocity = TransformNormal(velocity, worldTransform_.matWorld_);
+	//velocity = TransformNormal(velocity, worldTransform_.matWorld_);
 
 	// 弾を生成し、初期化
 	EnemyBullet* newBullet = new EnemyBullet();
@@ -117,3 +135,16 @@ void Enemy::ANIT() {
 
 	}
 }
+
+Vector3 Enemy::GetWorldPosition() {
+	Vector3 worldPos;
+	// ワールド行列の平行移動成分を取得(ワールド座標)
+	worldPos.x = worldTransform_.matWorld_.m[3][0];
+	worldPos.y = worldTransform_.matWorld_.m[3][1];
+	worldPos.z = worldTransform_.matWorld_.m[3][2];
+
+	return worldPos;
+
+}
+
+

@@ -5,6 +5,7 @@
 #include "WorldTransform.h"
 #include <list>
 
+//時機クラスの前方宣言
 class Player;
 
 /// <summary>
@@ -49,11 +50,19 @@ private:
 	EnemyBullet* enemyBullet_ = nullptr;
 	// 発射タイマー
 	int32_t timer_ = 0;
-	Player* player_ = nullptr;
+
+	//自キャラ
+
+	//Enemy* enemy_ = nullptr;
 
 public:
 	// 発射間隔
 	static const int kFireInterval = 60;
 	//接近フェーズ初期化
 	void ANIT();
+	Vector3 GetWorldPosition();
+	Player* player_ = nullptr;
+	Enemy* enemy_ = nullptr;
+	Vector3 DifferentialVector;
+	Vector3 resultNomalize;
 };

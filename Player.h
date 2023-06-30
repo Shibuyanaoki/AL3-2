@@ -19,8 +19,11 @@ public:
 
 	void Draw(ViewProjection& viewProjection);
 
-	//弾
-	std::list<PlayerBullet*> bullets_;
+	// ワールド座標を取得
+	Vector3 GetWorldPosition();
+	
+
+	
 
 private:
 	WorldTransform worldTransform_;
@@ -28,13 +31,13 @@ private:
 	uint32_t texturehandle_ = 0u;
 	Input* input_ = nullptr;
 	float inputFloat3[3] = {0, 0, 0};
-	PlayerBullet* bullet_ = nullptr;
-	
+	//PlayerBullet* bullet_ = nullptr;
+	// 弾
+	std::list<PlayerBullet*> bullets_;
 
 private:
 	void Rotate();
 	void Attack();
-	//ワールド座標を取得
-	Vector3 GetWorldPosition();
+
 
 };
