@@ -3,7 +3,6 @@
 #include "TextureManager.h"
 #include <cassert>
 
-
 GameScene::GameScene() {}
 
 GameScene::~GameScene() { delete model_, delete player_, delete debugCamera_, delete enemy_; }
@@ -23,36 +22,34 @@ void GameScene::Initialize() {
 	textureHandle_ = TextureManager::Load("uvChecker.png");
 	model_ = Model::Create();
 	viewProjection_.Initialize();
-	
 
-	//敵の速度
-	const float kEnemySpeed = 0.3f;
-	//敵の移動
+	// 敵の速度
+	const float kEnemySpeed = 0.1f;
+	// 敵の移動
 	Vector3 velocity(kEnemySpeed, kEnemySpeed, -kEnemySpeed);
-	//敵のポジション
+	// 敵のポジション
 	Vector3 EnemyPosition = {8.0f, 1.0f, 40.0f};
 
 	// 自キャラの生成
 	player_ = new Player();
 	// 自キャラの更新
 	player_->Initialize(model_, textureHandle_);
-	//敵の生成
+	// 敵の生成
 	enemy_ = new Enemy;
-	//敵の更新
+	// 敵の更新
 	enemy_->Initialize(model_, EnemyPosition, velocity);
 
 	// デバックカメラの生成
 	debugCamera_ = new DebugCamera(1280, 720);
 
 	enemy_->SetPlayer(player_);
-
 }
 
 void GameScene::Update() {
 	// 自キャラの更新
 	player_->Update();
 
-	//敵の更新
+	// 敵の更新
 	enemy_->Update();
 
 	// デバッグカメラの更新
@@ -61,8 +58,8 @@ void GameScene::Update() {
 #ifdef _DEBUG
 	if (input_->TriggerKey(DIK_1) && isDebugCameraActive_ == 0) {
 		isDebugCameraActive_ = 1;
-	} else if
-		(input_->TriggerKey(DIK_1) && isDebugCameraActive_ == 1) { isDebugCameraActive_ = 0;
+	} else if (input_->TriggerKey(DIK_1) && isDebugCameraActive_ == 1) {
+		isDebugCameraActive_ = 0;
 	}
 #endif
 
@@ -83,6 +80,8 @@ void GameScene::Update() {
 	AxisIndicator::GetInstance()->SetVisible(true);
 	// 軸方向表示が参照するビュープロジェクションを指定する(アドレス渡し)
 	AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
+
+	CheckAllCollision();
 }
 
 void GameScene::Draw() {
@@ -113,7 +112,7 @@ void GameScene::Draw() {
 	/// </summary>
 	player_->Draw(viewProjection_);
 
-	//敵の描画
+	// 敵の描画
 	enemy_->Draw(viewProjection_);
 
 	// 3Dオブジェクト描画後処理
@@ -132,4 +131,95 @@ void GameScene::Draw() {
 	Sprite::PostDraw();
 
 #pragma endregion
+}
+
+void GameScene::CheckAllCollision() {
+	// 判定対象AとBの座標
+	Vector3 posA, posB;
+	// 自弾リストを取得
+	const std::list<PlayerBullet*>& playerBullets = player_->GetBullets();
+	// 敵弾リストの取得
+	const std::list<EnemyBullet*>& enemyBullets = enemy_->GetBullet();
+
+#pragma region
+	// 自キャラと敵弾の当たり判定
+
+	// 自キャラの座標
+	posA = player_->GetWorldPosition();
+
+	// 自キャラと敵弾全ての当たり判定
+	for (EnemyBullet* bullet : enemyBullets) {
+		// 敵弾の座標
+		posB = bullet->GetWorldPosition();
+
+		float Hit = (posA.x - posB.x) * (posA.x - posB.x) + (posA.y - posB.y) * (posA.y - posB.y) +
+		            (posA.z - posB.z) * (posA.z - posB.z);
+
+		float Radius = (player_->radius + bullet->radius) * (player_->radius + bullet->radius);
+
+		if (Hit <= Radius) {
+			// 自キャラの衝突自コールバックを呼び出す
+			player_->OnCollision();
+			// 敵弾の衝突時コールバックを呼び出す
+			bullet->OnCollision();
+		}
+	}
+
+#pragma endregion
+
+#pragma region
+	// 自弾と敵キャラの当たり判定
+
+	// 敵の判定
+	posA = enemy_->GetWorldPosition();
+
+	for (PlayerBullet* bullet : playerBullets) {
+		// 自弾の座標
+		posB = bullet->GetWorldPosition();
+
+		float Hit = (posA.x - posB.x) * (posA.x - posB.x) + (posA.y - posB.y) * (posA.y - posB.y) +
+		            (posA.z - posB.z) * (posA.z - posB.z);
+
+		float Radius = (bullet->radius + enemy_->radius) * (bullet->radius + enemy_->radius);
+
+		if (Hit <= Radius) {
+			// 敵の衝突自コールバックを呼び出す
+			enemy_->OnCollision();
+			// 自弾の衝突時コールバックを呼び出す
+			bullet->OnCollision();
+		}
+	}
+
+#pragma endregion
+
+#pragma
+	// 自弾と敵弾の当たり判定
+
+	// 敵の判定
+	// posA = enemy_->GetWorldPosition();
+
+	for (PlayerBullet* playerBullet : playerBullets) {
+		posA = playerBullet->GetWorldPosition();
+		for (EnemyBullet* enemyBullet : enemyBullets) {
+			// 自弾の座標
+			posB = enemyBullet->GetWorldPosition();
+
+			float Hit = (posA.x - posB.x) * (posA.x - posB.x) +
+			            (posA.y - posB.y) * (posA.y - posB.y) +
+			            (posA.z - posB.z) * (posA.z - posB.z);
+
+			float Radius = (playerBullet->radius + enemyBullet->radius) *
+			               (playerBullet->radius + enemyBullet->radius);
+
+			if (Hit <= Radius) {
+				// 自弾の衝突自コールバックを呼び出す
+				playerBullet->OnCollision();
+				// 敵弾の衝突時コールバックを呼び出す
+				enemyBullet->OnCollision();
+			}
+		}
+	}
+
+#pragma endregion
+
 }

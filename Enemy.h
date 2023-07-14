@@ -23,12 +23,31 @@ public:
 
 	void SetPlayer(Player* player) { player_ = player; }
 
+	void OnCollision();
+
+	
+
+	public:
+	// 発射間隔
+	static const int kFireInterval = 60;
+	// 接近フェーズ初期化
+	void ANIT();
+	Vector3 GetWorldPosition();
+	Player* player_ = nullptr;
+	Enemy* enemy_ = nullptr;
+	Vector3 DifferentialVector;
+	Vector3 resultNomalize;
+	const std::list<EnemyBullet*>& GetBullet() const { return enemyBullets_; }
+	float radius = 3;
+
 private:
 	void Approach();
 
 	void Leave();
 
 	void Fire();
+
+	
 
 private:
 	// 行動フェーズ
@@ -39,6 +58,7 @@ private:
 
 	// 弾
 	std::list<EnemyBullet*> enemyBullets_;
+	
 
 	WorldTransform worldTransform_;
 	Model* model_ = nullptr;
@@ -55,14 +75,5 @@ private:
 
 	//Enemy* enemy_ = nullptr;
 
-public:
-	// 発射間隔
-	static const int kFireInterval = 60;
-	//接近フェーズ初期化
-	void ANIT();
-	Vector3 GetWorldPosition();
-	Player* player_ = nullptr;
-	Enemy* enemy_ = nullptr;
-	Vector3 DifferentialVector;
-	Vector3 resultNomalize;
+
 };

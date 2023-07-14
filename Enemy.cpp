@@ -74,7 +74,7 @@ void Enemy::Approach() {
 	// 移動(ベクトルを加算)
 	worldTransform_.translation_.z += velocity_.z;
 
-	if (worldTransform_.translation_.z < 0.0f) {
+	if (worldTransform_.translation_.z < -0.0f) {
 		
 		phase_ = Phase::Leave;
 	}
@@ -144,6 +144,10 @@ Vector3 Enemy::GetWorldPosition() {
 	worldPos.z = worldTransform_.matWorld_.m[3][2];
 
 	return worldPos;
+
+}
+
+void Enemy::OnCollision() {
 
 }
 

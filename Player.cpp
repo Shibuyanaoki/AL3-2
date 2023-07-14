@@ -17,7 +17,7 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 	input_ = Input::GetInstance();
 
 	// X,Y,Z方向のスケーリングを設定
-	worldTransform_.scale_ = {5.0f, 1.0f, 1.0f};
+	worldTransform_.scale_ = {1.0f, 1.0f, 1.0f};
 
 	// X,Y,Z方向の回転を設定
 	worldTransform_.rotation_ = {0.0f, 0.0f, 0.0f};
@@ -176,5 +176,9 @@ Vector3 Player::GetWorldPosition() {
 	worldPos.z = worldTransform_.matWorld_.m[3][2];
 	
 	return worldPos;
+
+}
+
+void Player::OnCollision() {
 
 }
