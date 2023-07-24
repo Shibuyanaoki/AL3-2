@@ -24,11 +24,7 @@ void EnemyBullet::Update() {
 	worldTransform_.translation_.y += velocity_.y;
 	worldTransform_.translation_.z += velocity_.z;
 
-	worldTransform_.matWorld_ = MakeAffineMatrix(
-	    worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
-
-	// 行列の転送　行列の計算後に行う
-	worldTransform_.TransferMatrix();
+	worldTransform_.UpdateMatrix();
 
 	// 時間経過です
 	if (--deathTimer_ <= 0) {

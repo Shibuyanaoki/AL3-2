@@ -30,7 +30,6 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 }
 
 void Player::Update() {
-	worldTransform_.TransferMatrix();
 
 	// デスフラグの立った弾を削除
 	bullets_.remove_if([](PlayerBullet* bullet) {
@@ -78,11 +77,7 @@ void Player::Update() {
 	worldTransform_.translation_.y += move.y;
 	worldTransform_.translation_.z += move.z;
 
-	worldTransform_.matWorld_ = MakeAffineMatrix(
-	    worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
-
-	// 行列の転送　行列の計算後に行う
-	worldTransform_.TransferMatrix();
+	worldTransform_.UpdateMatrix();
 
 	// キャラクターの座標を画面表示する処理
 	ImGui::Begin("Debug1");

@@ -5,7 +5,9 @@
 
 GameScene::GameScene() {}
 
-GameScene::~GameScene() { delete model_, delete player_, delete debugCamera_, delete enemy_; }
+GameScene::~GameScene() {
+	delete model_, delete player_, delete debugCamera_, delete enemy_, delete modelSkydome_;
+}
 
 void GameScene::Initialize() {
 
@@ -21,7 +23,13 @@ void GameScene::Initialize() {
 	// モデル
 	textureHandle_ = TextureManager::Load("uvChecker.png");
 	model_ = Model::Create();
+
+	//ビュープロジェクション
+	viewProjection_.farZ = 100;
 	viewProjection_.Initialize();
+
+	// 3Dモデルの生成
+	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
 
 	// 敵の速度
 	const float kEnemySpeed = 0.1f;
@@ -32,12 +40,18 @@ void GameScene::Initialize() {
 
 	// 自キャラの生成
 	player_ = new Player();
-	// 自キャラの更新
+	// 自キャラの初期化
 	player_->Initialize(model_, textureHandle_);
 	// 敵の生成
 	enemy_ = new Enemy;
-	// 敵の更新
+	// 敵の初期化
 	enemy_->Initialize(model_, EnemyPosition, velocity);
+
+	//天球の生成
+	skydome_ = new Skydome;
+
+	//天球の初期化
+	skydome_->Initialize(modelSkydome_);
 
 	// デバックカメラの生成
 	debugCamera_ = new DebugCamera(1280, 720);
@@ -54,6 +68,9 @@ void GameScene::Update() {
 
 	// デバッグカメラの更新
 	debugCamera_->Update();
+
+	//天球の更新
+	skydome_->Update();
 
 #ifdef _DEBUG
 	if (input_->TriggerKey(DIK_1) && isDebugCameraActive_ == 0) {
@@ -114,6 +131,9 @@ void GameScene::Draw() {
 
 	// 敵の描画
 	enemy_->Draw(viewProjection_);
+
+	//天球の描画 
+	skydome_->Draw(viewProjection_);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();

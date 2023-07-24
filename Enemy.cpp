@@ -34,11 +34,7 @@ void Enemy::Update() {
 		return false;
 	});
 
-	worldTransform_.matWorld_ = MakeAffineMatrix(
-	    worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
-
-	// 行列の転送　行列の計算後に行う
-	worldTransform_.TransferMatrix();
+	worldTransform_.UpdateMatrix();
 
 	switch (phase_) {
 	case Phase::Approach:
