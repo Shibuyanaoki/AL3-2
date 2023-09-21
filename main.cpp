@@ -1,10 +1,14 @@
 #include "Audio.h"
 #include "AxisIndicator.h"
+#include "Clear.h"
 #include "DirectXCommon.h"
+#include "GameOver.h"
 #include "GameScene.h"
 #include "ImGuiManager.h"
 #include "PrimitiveDrawer.h"
+#include "Scene.h"
 #include "TextureManager.h"
+#include "Title.h"
 #include "WinApp.h"
 
 // Windowsアプリでのエントリーポイント(main関数)
@@ -17,6 +21,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	AxisIndicator* axisIndicator = nullptr;
 	PrimitiveDrawer* primitiveDrawer = nullptr;
 	GameScene* gameScene = nullptr;
+	Title* title = nullptr;
+	Clear* clear = nullptr;
+	GameOver* gameOver = nullptr;
+
+	Scene scene = Scene::TITLE;
 
 	// ゲームウィンドウの作成
 	win = WinApp::GetInstance();
@@ -60,6 +69,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// ゲームシーンの初期化
 	gameScene = new GameScene();
 	gameScene->Initialize();
+	title = new Title;
+	title->Initialize();
+	clear = new Clear;
+	clear->Initialize();
+	gameOver = new GameOver;
+	gameOver->Initialize();
+
 
 	// メインループ
 	while (true) {
@@ -72,8 +88,64 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		imguiManager->Begin();
 		// 入力関連の毎フレーム処理
 		input->Update();
-		// ゲームシーンの毎フレーム処理
-		gameScene->Update();
+
+		switch (scene) {
+		case Scene::TITLE:
+			if (title->IsSceneEnd() == true) {
+				// 次のシーンを値を代入してシーン切り替え
+				scene = title->NextScene();
+				title->IsSceneStart();
+			}
+
+			// タイトルシーンの毎フレーム処理
+			title->Update();
+
+			break;
+
+		case Scene::GAME:
+			// ゲームシーンの毎フレーム処理
+			gameScene->Update();
+
+			if (gameScene->IsSceneEnd() == true) {
+				// 次のシーンを値を代入してシーン切り替え
+				scene = gameScene->NextSceneOver();
+				//gameScene->IsSceneEndStart();
+				gameScene->Reset();
+			}
+			
+			if (gameScene->IsSceneClear() == true) {
+				// 次のシーンを値を代入してシーン切り替え
+				scene = gameScene->NextSceneClear();
+				//gameScene->IsSceneClearStart();
+				gameScene->Reset();
+			}
+
+
+			break;
+
+		case Scene::GAMECLEAR:
+			if (clear->IsSceneEnd() == true) {
+				// 次のシーンを値を代入してシーン切り替え
+				scene = clear->NextScene();
+				clear->IsSceneStart();
+			}
+
+			// ゲームシーンの毎フレーム処理
+			clear->Update();
+			
+			break;
+
+		case Scene::GAMEOVER:
+			if (gameOver->IsSceneEnd() == true) {
+				// 次のシーンを値を代入してシーン切り替え
+				scene = gameOver->NextScene();
+				gameOver->IsSceneStart();				
+			}
+
+			// ゲームシーンの毎フレーム処理
+			gameOver->Update();
+		}
+
 		// 軸表示の更新
 		axisIndicator->Update();
 		// ImGui受付終了
@@ -81,8 +153,39 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		// 描画開始
 		dxCommon->PreDraw();
-		// ゲームシーンの描画
-		gameScene->Draw();
+
+		switch (scene) {
+		case Scene::TITLE:
+
+			
+			// ゲームシーンの描画
+			title->Draw();
+			
+
+			break;
+
+		case Scene::GAME:
+
+			// ゲームシーンの描画
+			gameScene->Draw();
+			
+
+			break;
+
+		case Scene::GAMECLEAR:
+			
+			// ゲームシーンの描画
+			clear->Draw();
+			
+			break;
+
+		case Scene::GAMEOVER:
+			
+			// ゲームシーンの描画
+			gameOver->Draw();
+			
+			break;
+		}
 		// 軸表示の描画
 		axisIndicator->Draw();
 		// プリミティブ描画のリセット
@@ -91,9 +194,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		imguiManager->Draw();
 		// 描画終了
 		dxCommon->PostDraw();
-	}
 
-	// 各種解放
+	}
 	SafeDelete(gameScene);
 	audio->Finalize();
 	// ImGui解放

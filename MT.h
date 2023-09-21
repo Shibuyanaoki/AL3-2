@@ -4,6 +4,10 @@
 #include <assert.h>
 #include <cmath>
 
+Vector3 Subtract(const Vector3& v1, const Vector3& v2);
+
+Vector3 Add(const Vector3& v1, const Vector3& v2);
+
 /// <summary>
 /// X軸回転行列
 /// </summary>
@@ -48,6 +52,22 @@ Matrix4x4 MakeScaleMatrix(const Vector3& scale);
 Matrix4x4 Multiply(const Matrix4x4& m1, const Matrix4x4& m2);
 
 /// <summary>
+///
+/// </summary>
+/// <param name="v1"></param>
+/// <param name="v2"></param>
+/// <returns></returns>
+Vector3 Multiply(const float& v1, const Vector3& v2);
+
+/// <summary>
+///
+/// </summary>
+/// <param name="vector"></param>
+/// <param name="matrix"></param>
+/// <returns></returns>
+Vector3 Multiply(Vector3 vector, Matrix4x4 matrix);
+
+/// <summary>
 /// アフィン変換
 /// </summary>
 /// <param name="scale"></param>
@@ -86,6 +106,16 @@ float Length(Vector3& v);
 /// <returns></returns>
 Vector3 Normalize(Vector3& v);
 
+/// <summary>
+///
+/// </summary>
+/// <param name="m"></param>
+/// <returns></returns>
+Matrix4x4 Inverse(const Matrix4x4& m);
 
+// ビューポート変換行列
+Matrix4x4 MakeViewPortMatrix(
+    float left, float top, float width, float height, float minDepth, float maxDepth);
 
-
+// 座標返還
+Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix);
