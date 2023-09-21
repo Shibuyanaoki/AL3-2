@@ -33,8 +33,7 @@ void GameScene::Initialize() {
 	// モデル
 	textureHandle_ = TextureManager::Load("player.png");
 
-	//textureHandleHP_ = TextureManager::Load("clear.png");
-
+	// textureHandleHP_ = TextureManager::Load("clear.png");
 
 	/*sprite_ = Sprite::Create(textureHandleHP_, {0, 0}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.5f, 0.5f});
 	sprite2_ = Sprite::Create(textureHandleHP_, {0, 0}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.5f, 0.5f});
@@ -53,11 +52,11 @@ void GameScene::Initialize() {
 	TextureManager::Load("reticle.png");
 
 	// 敵の速度
-	//const float kEnemySpeed = 0.1f;
+	// const float kEnemySpeed = 0.1f;
 	// 敵の移動
-	//Vector3 velocity(kEnemySpeed, kEnemySpeed, -kEnemySpeed);
+	// Vector3 velocity(kEnemySpeed, kEnemySpeed, -kEnemySpeed);
 	// 敵のポジション
-	//Vector3 EnemyPosition = {8.0f, 1.0f, 40.0f};
+	// Vector3 EnemyPosition = {8.0f, 1.0f, 40.0f};
 
 	// 自キャラの生成
 	player_ = new Player();
@@ -69,7 +68,7 @@ void GameScene::Initialize() {
 	// レイルカメラの生成
 	railCamera_ = new RailCamera();
 	// レイルカメラの初期化
-	railCamera_->Intialize({0.0f,0.0f,0.0f}, {0.0f, 0.0f, 0.0f});
+	railCamera_->Intialize({0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f});
 
 	// 天球の生成
 	skydome_ = new Skydome;
@@ -181,18 +180,6 @@ void GameScene::Draw() {
 	/// ここに背景スプライトの描画処理を追加できる
 	/// </summary>
 
-	/*if (HP >= 3) {
-		sprite_->Draw();
-	}
-
-	if (HP >= 2) {
-		sprite2_->Draw();
-	}
-
-	if (HP >= 1) {
-		sprite3_->Draw();
-	}*/
-
 	// スプライト描画後処理
 	Sprite::PostDraw();
 	// 深度バッファクリア
@@ -274,10 +261,7 @@ void GameScene::CheckAllCollision() {
 			// 敵弾の衝突時コールバックを呼び出す
 			bullet->OnCollision();
 
-			HP--;
-			if (HP == 0) {
-				isSceneEnd = true;
-			}
+			isSceneEnd = true;
 		}
 	}
 
@@ -441,7 +425,7 @@ void GameScene::EnemyOccurrence(Vector3 position, Vector3 velocity) {
 }
 
 void GameScene::Reset() {
-	//プレイヤーの初期値
+	// プレイヤーの初期値
 	Vector3 playerPosition(0, 0, 50);
 	// 自キャラの初期化
 	player_->Initialize(model_, textureHandle_, playerPosition);
@@ -449,20 +433,16 @@ void GameScene::Reset() {
 	// レイルカメラの初期化
 	railCamera_->Intialize({0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f});
 
-	HP = 3;
-
 	timer = 60 * 18;
 
 	isSceneClear = false;
 	isSceneEnd = false;
 
 	for (Enemy* enemy : enemys_) {
-		//delete enemy;
+		// delete enemy;
 		enemy->OnCollision();
 	}
 
-
 	/* standFlag = false;
 	standTime = 0;*/
-
 }

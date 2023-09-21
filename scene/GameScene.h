@@ -108,7 +108,7 @@ private: // メンバ変数
 
 	int standFlag = false;
 	int standTime = 0;
-	int HP = 3;
+	
 
 	/// <summary>
 	/// ゲームシーン用
