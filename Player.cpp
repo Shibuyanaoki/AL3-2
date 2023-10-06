@@ -80,19 +80,19 @@ void Player::Update(ViewProjection& viewProjection) {
 	worldTransform_.UpdateMatrix();
 
 	// キャラクターの座標を画面表示する処理
-	ImGui::Begin("Debug1");
-	float playerPos[] = {
-	    worldTransform_.translation_.x, worldTransform_.translation_.y,
-	    worldTransform_.translation_.z};
-	ImGui::SliderFloat3("PlayerPos", playerPos, 0, 1280);
+	//ImGui::Begin("Debug1");
+	//float playerPos[] = {
+	//    worldTransform_.translation_.x, worldTransform_.translation_.y,
+	//    worldTransform_.translation_.z};
+	//ImGui::SliderFloat3("PlayerPos", playerPos, 0, 1280);
 
-	// 処理のままだとSilderFloat3でplayerPosの値を変えているので実際の座標(translation)が
-	// 変わっていないのでここで変更する
-	worldTransform_.translation_.x = playerPos[0];
-	worldTransform_.translation_.y = playerPos[1];
-	worldTransform_.translation_.z = playerPos[2];
+	//// 処理のままだとSilderFloat3でplayerPosの値を変えているので実際の座標(translation)が
+	//// 変わっていないのでここで変更する
+	//worldTransform_.translation_.x = playerPos[0];
+	//worldTransform_.translation_.y = playerPos[1];
+	//worldTransform_.translation_.z = playerPos[2];
 
-	ImGui::End();
+	//ImGui::End();
 
 	Rotate();
 
@@ -183,17 +183,17 @@ void Player::Update(ViewProjection& viewProjection) {
 
 	worldTransform3DReticle_.UpdateMatrix();
 
-	ImGui::Begin("Player");
-	// ImGui::Text("2DReeticle:(%f,%f)",sprite)
-	ImGui::Text(
-	    "posX %f,posY %f,posZ %f", worldTransform_.translation_.x, worldTransform_.translation_.y,
-	    worldTransform_.translation_.z);
-	ImGui::Text("Near:(%+.2f,%+.2f,%+.2f)", posNear.x, posNear.y, posNear.z);
-	ImGui::Text("Far:(%+.2f,%+.2f,%+.2f)", posFar.x, posFar.y, posFar.z);
-	ImGui::Text(
-	    "3Deticle:(%+.2f,%+.2f,%+.2f)", worldTransform3DReticle_.translation_.x,
-	    worldTransform3DReticle_.translation_.y, worldTransform3DReticle_.translation_.z);
-	ImGui::End();
+	//ImGui::Begin("Player");
+	//// ImGui::Text("2DReeticle:(%f,%f)",sprite)
+	//ImGui::Text(
+	//    "posX %f,posY %f,posZ %f", worldTransform_.translation_.x, worldTransform_.translation_.y,
+	//    worldTransform_.translation_.z);
+	//ImGui::Text("Near:(%+.2f,%+.2f,%+.2f)", posNear.x, posNear.y, posNear.z);
+	//ImGui::Text("Far:(%+.2f,%+.2f,%+.2f)", posFar.x, posFar.y, posFar.z);
+	//ImGui::Text(
+	//    "3Deticle:(%+.2f,%+.2f,%+.2f)", worldTransform3DReticle_.translation_.x,
+	//    worldTransform3DReticle_.translation_.y, worldTransform3DReticle_.translation_.z);
+	//ImGui::End();
 
 #pragma endregion
 

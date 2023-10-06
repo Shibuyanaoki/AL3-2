@@ -37,7 +37,7 @@ void RailCamera::Update() {
 	viewProjection_.matView = Inverse(worldTransform_.matWorld_);
 
 	// カメラの座標を画面表示する処理
-	ImGui::Begin("Camera");
+	/*ImGui::Begin("Camera");
 	float CameraPos[] = {
 	    worldTransform_.translation_.x, worldTransform_.translation_.y,
 	    worldTransform_.translation_.z};
@@ -49,5 +49,5 @@ void RailCamera::Update() {
 
 	ImGui::SliderFloat3("PlayerPos", CameraRot, 0, 1280);
 
-	ImGui::End();
+	ImGui::End();*/
 };
